@@ -1,17 +1,13 @@
-CC      = cc
-CFLAGS  = -Wall -Wextra -std=c11 -g
-TARGET  = processflow
-SRC     = src/main.c
+CC = cc
+CFLAGS = -Wall -Wextra -g
 
-all: $(TARGET)
+processflow: ./src/main.c
+	$(CC) $(CFLAGS) src/main.c -o ./processflow
 
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
-test: $(TARGET)
-	@echo "sem testes ainda — issue 21"
+.PHONY: clean
 
 clean:
-	rm -f $(TARGET) *.o
+	rm -f processflow
 
-.PHONY: all test clean
+

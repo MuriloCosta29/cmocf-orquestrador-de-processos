@@ -56,8 +56,7 @@ dkms.conf
 *.dwo
 
 # Notes
-aprendizados/
-notes/
+NOTES.md
 
 # Executable
 processflow

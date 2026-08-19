@@ -55,7 +55,9 @@ dkms.conf
 # debug information files
 *.dwo
 
-# anotações
+# Notes
 aprendizados/
 notes/
+
+# Executable
 processflow

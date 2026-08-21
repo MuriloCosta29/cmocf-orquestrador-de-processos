@@ -1,13 +1,19 @@
 CC = cc
 CFLAGS = -Wall -Wextra -g
+TARGET = processflow
+SRC = src/main.c
 
-processflow: ./src/main.c
-	$(CC) $(CFLAGS) src/main.c -o ./processflow
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
-
-.PHONY: clean
+.PHONY: clean run debug
 
 clean:
-	rm -f processflow
+	rm -f $(TARGET)
 
+run: $(TARGET)
+	./$(TARGET)
 
+debug:
+	$(CC) $(CFLAGS) -fsanitize=address $(SRC) -o $(TARGET)
+	./$(TARGET)

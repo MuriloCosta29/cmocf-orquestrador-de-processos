@@ -1,13 +1,26 @@
+#include <_string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define MAX_LINE 1024
 #define MAX_ARGS 64
+#define MAX_TASKS 64
+
+// ----------------------
+
+typedef struct Task {
+  char *nome;
+  char *argumentos[MAX_ARGS];
+} Task;
+
+Task tasks[MAX_TASKS];
+int task_count = 0;
+
+// ----------------------
 
 int main(void) {
   char line[MAX_LINE];
-
   char *args[MAX_ARGS];
 
   while (1) {
@@ -27,33 +40,52 @@ int main(void) {
     }
 
     int count = 0;
-    // Contar quantas palavras foram contadas.
 
     char *token = strtok(line, " ");
-    // strtok divide uma string em multiplos pedaços
 
     while (token != NULL && count < MAX_ARGS - 1) {
       args[count] = token;
-      // Guarda a palavra atual na próxima posição do array.
       count++;
-      // avança posição agora count é = 1, então
-      // próxima palavra vai para args[1].
       token = strtok(NULL, " ");
-      // Pede a prox palavra. O NULL significa:
-      // Continue de onde parou.
-      // Essa linha faz o loop avançar! Sem ela
-      // token nunca mudaria e o loop rodaria para sempre.
     }
 
     args[count] = NULL;
-    // Marca o fim da lista
-    // pq o args aqui vai ficar assim:
-    // args[<ultimo-indice>] = NULL
-    // porque o execvp percorre array até achar NULL,
-    // então tem que coloca-ló para saber onde lista argumentos acaba.
 
-    for (int i = 0; i < count; i++) { // não é <=, pq <= leria até '\0'.
+    for (int i = 0; i < count; i++) {
       printf("[%d] %s\n", i, args[i]);
+    }
+
+    if (count == 0) {
+      continue;
+    }
+
+    if (strcmp(args[0], "task") == 0) {
+      // cadastra na tabela
+      if (count < 3) {
+        fprintf(stderr, "depois coloco mensagem\n");
+        continue;
+      }
+      if (task_count >= MAX_TASKS) {
+        fprintf(stderr, "ERROR!");
+        continue;
+      }
+
+      tasks[task_count].nome = strdup(args[1]);
+
+      for (int i = 2; i < count; i++) {
+        tasks[task_count].argumentos[i - 2] = strdup(args[i]);
+      }
+      tasks[task_count].argumentos[count - 2] = NULL;
+      task_count++;
+      printf("Cadastro confirmado.\n");
+    } else if (strcmp(args[0], "run") == 0) {
+      // procura na tabela, fork/exec/wait
+    } else if (strcmp(args[0], "input") == 0) {
+      // anota o arquivo de entrada na tarefa
+    } else if (strcmp(args[0], "workdir") == 0) {
+      // troca de diretório
+    } else {
+      // comando desconhecido: mensagem de erro, continua
     }
   }
 }

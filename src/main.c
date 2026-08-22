@@ -81,57 +81,142 @@ int main(void) {
 
       // ------------
       // RUN - procura na tabela, fork/exec/wait
-      //
+
     } else if (strcmp(args[0], "run") == 0) {
 
-      if (count != 2) {
+      if (count < 2) {
         fprintf(stderr, "Uso: run <tarefa>\n");
         continue;
       }
 
-      int found = -1;
+      int first_task = 1;
+      int parallel = 0;
 
-      for (int i = 0; i < task_count; i++) {
-        if (strcmp(tasks[i].nome, args[1]) == 0) {
-          found = i;
-          break;
+      if (strcmp(args[1], "sequential") == 0) {
+        if (count < 3) {
+          fprintf(stderr, "Uso: run sequential <tarefa1> [tarefa2...]\n");
+          continue;
+        }
+
+        first_task = 2;
+
+      } else if (strcmp(args[1], "parallel") == 0) {
+        if (count < 3) {
+          fprintf(stderr, "Uso: run parallel <tarefa1> [tarefa2...]\n");
+          continue;
+        }
+
+        first_task = 2;
+        parallel = 1;
+
+      } else if (count != 2) {
+        fprintf(stderr, "Uso: run <tarefa>\n");
+        continue;
+      }
+
+      int task_quantity = count - first_task;
+      int task_indexes[MAX_ARGS];
+      int missing_task = 0;
+
+      for (int i = 0; i < task_quantity; i++) {
+        task_indexes[i] = -1;
+
+        for (int j = 0; j < task_count; j++) {
+          if (strcmp(tasks[j].nome, args[first_task + i]) == 0) {
+            task_indexes[i] = j;
+            break;
+          }
+        }
+
+        if (task_indexes[i] == -1) {
+          fprintf(stderr, "Tarefa '%s' não existe.\n", args[first_task + i]);
+          missing_task = 1;
         }
       }
 
-      if (found == -1) {
-        fprintf(stderr, "Tarefa '%s' não existe.\n", args[1]);
+      if (missing_task) {
         continue;
       }
 
-      pid_t pid = fork();
+      if (!parallel) {
+        for (int i = 0; i < task_quantity; i++) {
+          int task_index = task_indexes[i];
+          pid_t pid = fork();
 
-      if (pid < 0) {
-        perror("Erro ao criar processos.");
-        continue;
-      }
+          if (pid < 0) {
+            perror("Erro ao criar processo");
+            continue;
+          }
 
-      if (pid == 0) {
-        execvp(tasks[found].argumentos[0], tasks[found].argumentos);
-        perror("Erro ao executar programa");
-        exit(EXIT_FAILURE);
-      }
+          if (pid == 0) {
+            execvp(tasks[task_index].argumentos[0],
+                   tasks[task_index].argumentos);
 
-      int status;
+            perror("Erro ao executar programa");
+            exit(EXIT_FAILURE);
+          }
 
-      if (waitpid(pid, &status, 0) == -1) {
-        perror("Erro ao esperar processo");
-        continue;
-      }
+          int status;
 
-      if (WIFEXITED(status)) {
-        int exit_code = WEXITSTATUS(status);
+          if (waitpid(pid, &status, 0) == -1) {
+            perror("Erro ao esperar processo");
+            continue;
+          }
 
-        if (exit_code != 0) {
-          fprintf(stderr, "Tarefa '%s' terminou com código %d.\n",
-                  tasks[found].nome, exit_code);
+          if (WIFEXITED(status)) {
+            int exit_code = WEXITSTATUS(status);
+
+            if (exit_code != 0) {
+              fprintf(stderr, "Tarefa '%s' terminou com código %d.\n",
+                      tasks[task_index].nome, exit_code);
+            }
+          }
+        }
+
+      } else {
+        pid_t pids[MAX_ARGS];
+
+        for (int i = 0; i < task_quantity; i++) {
+          int task_index = task_indexes[i];
+          pids[i] = fork();
+
+          if (pids[i] < 0) {
+            perror("Erro ao criar processo");
+            continue;
+          }
+
+          if (pids[i] == 0) {
+            execvp(tasks[task_index].argumentos[0],
+                   tasks[task_index].argumentos);
+
+            perror("Erro ao executar programa");
+            exit(EXIT_FAILURE);
+          }
+        }
+
+        for (int i = 0; i < task_quantity; i++) {
+          if (pids[i] < 0) {
+            continue;
+          }
+
+          int status;
+          int task_index = task_indexes[i];
+
+          if (waitpid(pids[i], &status, 0) == -1) {
+            perror("Erro ao esperar processo");
+            continue;
+          }
+
+          if (WIFEXITED(status)) {
+            int exit_code = WEXITSTATUS(status);
+
+            if (exit_code != 0) {
+              fprintf(stderr, "Tarefa '%s' terminou com código %d.\n",
+                      tasks[task_index].nome, exit_code);
+            }
+          }
         }
       }
-
       // ------------
       // INPUT - anota o arquivo de entrada na tarefa
     } else if (strcmp(args[0], "input") == 0) {

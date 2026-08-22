@@ -1,7 +1,10 @@
-#include <_string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/_types/_pid_t.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #define MAX_LINE 1024
 #define MAX_ARGS 64
@@ -51,16 +54,14 @@ int main(void) {
 
     args[count] = NULL;
 
-    for (int i = 0; i < count; i++) {
-      printf("[%d] %s\n", i, args[i]);
-    }
-
     if (count == 0) {
       continue;
     }
 
+    // ------------
+    // TASK - cadastra na tabela
     if (strcmp(args[0], "task") == 0) {
-      // cadastra na tabela
+
       if (count < 3) {
         fprintf(stderr, "depois coloco mensagem\n");
         continue;
@@ -78,12 +79,69 @@ int main(void) {
       tasks[task_count].argumentos[count - 2] = NULL;
       task_count++;
       printf("Cadastro confirmado.\n");
+
+      // ------------
+      // RUN - procura na tabela, fork/exec/wait
+      //
     } else if (strcmp(args[0], "run") == 0) {
-      // procura na tabela, fork/exec/wait
+
+      if (count != 2) {
+        fprintf(stderr, "Uso: run <tarefa>\n");
+        continue;
+      }
+
+      int found = -1;
+
+      for (int i = 0; i < task_count; i++) {
+        if (strcmp(tasks[i].nome, args[1]) == 0) {
+          found = i;
+          break;
+        }
+      }
+
+      if (found == -1) {
+        fprintf(stderr, "Tarefa '%s' não existe.\n", args[1]);
+        continue;
+      }
+
+      pid_t pid = fork();
+
+      if (pid < 0) {
+        perror("Erro ao criar processos.");
+        continue;
+      }
+
+      if (pid == 0) {
+        execvp(tasks[found].argumentos[0], tasks[found].argumentos);
+        perror("Erro ao executar programa");
+        exit(EXIT_FAILURE);
+      }
+
+      int status;
+
+      if (waitpid(pid, &status, 0) == -1) {
+        perror("Erro ao esperar processo");
+        continue;
+      }
+
+      if (WIFEXITED(status)) {
+        int exit_code = WEXITSTATUS(status);
+
+        if (exit_code != 0) {
+          fprintf(stderr, "Tarefa '%s' terminou com código %d.\n",
+                  tasks[found].nome, exit_code);
+        }
+      }
+
+      // ------------
+      // INPUT - anota o arquivo de entrada na tarefa
     } else if (strcmp(args[0], "input") == 0) {
-      // anota o arquivo de entrada na tarefa
+
+      // ------------
+      // WORKDIR - troca de diretório
     } else if (strcmp(args[0], "workdir") == 0) {
-      // troca de diretório
+
+      // ------------
     } else {
       // comando desconhecido: mensagem de erro, continua
     }

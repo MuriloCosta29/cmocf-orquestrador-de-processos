@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +15,7 @@
 typedef struct Task {
   char *nome;
   char *argumentos[MAX_ARGS];
+  char *arquivo_entrada;
 } Task;
 
 Task tasks[MAX_TASKS];
@@ -149,6 +151,23 @@ int main(void) {
           }
 
           if (pid == 0) {
+            if (tasks[task_index].arquivo_entrada != NULL) {
+              int fd = open(tasks[task_index].arquivo_entrada, O_RDONLY);
+
+              if (fd == -1) {
+                perror("Erro ao abrir arquivo de entrada");
+                exit(EXIT_FAILURE);
+              }
+
+              if (dup2(fd, STDIN_FILENO) == -1) {
+                perror("Erro ao redirecionar entrada");
+                close(fd);
+                exit(EXIT_FAILURE);
+              }
+
+              close(fd);
+            }
+
             execvp(tasks[task_index].argumentos[0],
                    tasks[task_index].argumentos);
 
@@ -186,6 +205,23 @@ int main(void) {
           }
 
           if (pids[i] == 0) {
+            if (tasks[task_index].arquivo_entrada != NULL) {
+              int fd = open(tasks[task_index].arquivo_entrada, O_RDONLY);
+
+              if (fd == -1) {
+                perror("Erro ao abrir arquivo de entrada");
+                exit(EXIT_FAILURE);
+              }
+
+              if (dup2(fd, STDIN_FILENO) == -1) {
+                perror("Erro ao redirecionar entrada");
+                close(fd);
+                exit(EXIT_FAILURE);
+              }
+
+              close(fd);
+            }
+
             execvp(tasks[task_index].argumentos[0],
                    tasks[task_index].argumentos);
 
@@ -220,6 +256,27 @@ int main(void) {
       // ------------
       // INPUT - anota o arquivo de entrada na tarefa
     } else if (strcmp(args[0], "input") == 0) {
+
+      if (count != 3) {
+        fprintf(stderr, "Uso: input <tarefa> <arquivo>\n");
+        continue;
+      }
+
+      int found = -1;
+
+      for (int i = 0; i < task_count; i++) {
+        if (strcmp(tasks[i].nome, args[1]) == 0) {
+          found = i;
+          break;
+        }
+      }
+
+      if (found == -1) {
+        fprintf(stderr, "Tarefa '%s' não existe.\n", args[1]);
+        continue;
+      }
+
+      tasks[found].arquivo_entrada = strdup(args[2]);
 
       // ------------
       // WORKDIR - troca de diretório

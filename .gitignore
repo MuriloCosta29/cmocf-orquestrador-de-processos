@@ -61,3 +61,7 @@ duvidas.md
 
 # Executable
 processflow
+
+.DS_Store
+
+experiments/

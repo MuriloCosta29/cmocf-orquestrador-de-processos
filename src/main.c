@@ -225,6 +225,16 @@ int main(void) {
       // WORKDIR - troca de diretório
     } else if (strcmp(args[0], "workdir") == 0) {
 
+      if (count != 2) {
+        fprintf(stderr, "Uso: workdir <diretório>\n");
+        continue;
+      }
+
+      if (chdir(args[1]) == -1) {
+        perror("Erro ao alterar diretório");
+        continue;
+      }
+
       // ------------
     } else {
       // comando desconhecido: mensagem de erro, continua

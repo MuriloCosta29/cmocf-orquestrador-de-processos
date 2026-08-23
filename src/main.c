@@ -237,7 +237,7 @@ int main(void) {
 
       // ------------
     } else {
-      // comando desconhecido: mensagem de erro, continua
+      fprintf(stderr, "Comando desconhecido: '%s'\n", args[0]);
     }
   }
 }

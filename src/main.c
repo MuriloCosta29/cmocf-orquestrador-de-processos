@@ -10,18 +10,16 @@
 #define MAX_ARGS 64
 #define MAX_TASKS 64
 
-// ----------------------
-
 typedef struct Task {
   char *nome;
   char *argumentos[MAX_ARGS];
   char *arquivo_entrada;
+  char *arquivo_saida;
+  int append;
 } Task;
 
 Task tasks[MAX_TASKS];
 int task_count = 0;
-
-// ----------------------
 
 int main(void) {
   char line[MAX_LINE];
@@ -30,6 +28,7 @@ int main(void) {
   while (1) {
 
     printf("processflow> ");
+    fflush(stdout);
 
     char *result = fgets(line, sizeof(line), stdin);
 
@@ -59,8 +58,6 @@ int main(void) {
       continue;
     }
 
-    // ------------
-    // TASK - cadastra na tabela
     if (strcmp(args[0], "task") == 0) {
 
       if (count < 3) {
@@ -80,9 +77,6 @@ int main(void) {
       tasks[task_count].argumentos[count - 2] = NULL;
       task_count++;
       printf("Cadastro confirmado.\n");
-
-      // ------------
-      // RUN - procura na tabela, fork/exec/wait
 
     } else if (strcmp(args[0], "run") == 0) {
 
@@ -168,6 +162,31 @@ int main(void) {
               close(fd);
             }
 
+            if (tasks[task_index].arquivo_saida != NULL) {
+              int flags = O_WRONLY | O_CREAT;
+
+              if (tasks[task_index].append) {
+                flags |= O_APPEND;
+              } else {
+                flags |= O_TRUNC;
+              }
+
+              int fd = open(tasks[task_index].arquivo_saida, flags, 0644);
+
+              if (fd == -1) {
+                perror("Erro ao abrir arquivo de saída");
+                exit(EXIT_FAILURE);
+              }
+
+              if (dup2(fd, STDOUT_FILENO) == -1) {
+                perror("Erro ao redirecionar saída");
+                close(fd);
+                exit(EXIT_FAILURE);
+              }
+
+              close(fd);
+            }
+
             execvp(tasks[task_index].argumentos[0],
                    tasks[task_index].argumentos);
 
@@ -222,6 +241,31 @@ int main(void) {
               close(fd);
             }
 
+            if (tasks[task_index].arquivo_saida != NULL) {
+              int flags = O_WRONLY | O_CREAT;
+
+              if (tasks[task_index].append) {
+                flags |= O_APPEND;
+              } else {
+                flags |= O_TRUNC;
+              }
+
+              int fd = open(tasks[task_index].arquivo_saida, flags, 0644);
+
+              if (fd == -1) {
+                perror("Erro ao abrir arquivo de saída");
+                exit(EXIT_FAILURE);
+              }
+
+              if (dup2(fd, STDOUT_FILENO) == -1) {
+                perror("Erro ao redirecionar saída");
+                close(fd);
+                exit(EXIT_FAILURE);
+              }
+
+              close(fd);
+            }
+
             execvp(tasks[task_index].argumentos[0],
                    tasks[task_index].argumentos);
 
@@ -253,8 +297,6 @@ int main(void) {
           }
         }
       }
-      // ------------
-      // INPUT - anota o arquivo de entrada na tarefa
     } else if (strcmp(args[0], "input") == 0) {
 
       if (count != 3) {
@@ -278,8 +320,54 @@ int main(void) {
 
       tasks[found].arquivo_entrada = strdup(args[2]);
 
-      // ------------
-      // WORKDIR - troca de diretório
+    } else if (strcmp(args[0], "output") == 0) {
+
+      if (count != 3) {
+        fprintf(stderr, "Uso: output <tarefa> <arquivo>\n");
+        continue;
+      }
+
+      int found = -1;
+
+      for (int i = 0; i < task_count; i++) {
+        if (strcmp(tasks[i].nome, args[1]) == 0) {
+          found = i;
+          break;
+        }
+      }
+
+      if (found == -1) {
+        fprintf(stderr, "Tarefa '%s' não existe.\n", args[1]);
+        continue;
+      }
+
+      tasks[found].arquivo_saida = strdup(args[2]);
+      tasks[found].append = 0;
+
+    } else if (strcmp(args[0], "append") == 0) {
+
+      if (count != 3) {
+        fprintf(stderr, "Uso: append <tarefa> <arquivo>\n");
+        continue;
+      }
+
+      int found = -1;
+
+      for (int i = 0; i < task_count; i++) {
+        if (strcmp(tasks[i].nome, args[1]) == 0) {
+          found = i;
+          break;
+        }
+      }
+
+      if (found == -1) {
+        fprintf(stderr, "Tarefa '%s' não existe.\n", args[1]);
+        continue;
+      }
+
+      tasks[found].arquivo_saida = strdup(args[2]);
+      tasks[found].append = 1;
+
     } else if (strcmp(args[0], "workdir") == 0) {
 
       if (count != 2) {
@@ -292,7 +380,6 @@ int main(void) {
         continue;
       }
 
-      // ------------
     } else {
       fprintf(stderr, "Comando desconhecido: '%s'\n", args[0]);
     }

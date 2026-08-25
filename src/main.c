@@ -9,6 +9,7 @@
 #define MAX_LINE 1024
 #define MAX_ARGS 64
 #define MAX_TASKS 64
+#define MAX_JOBS 64
 
 typedef struct Task {
   char *nome;
@@ -18,8 +19,16 @@ typedef struct Task {
   int append;
 } Task;
 
+typedef struct Job {
+  int id;
+  pid_t pid;
+  int task_index;
+} Job;
+
 Task tasks[MAX_TASKS];
 int task_count = 0;
+Job jobs[MAX_JOBS];
+int job_count = 0;
 
 int main(int argc, char *argv[]) {
   char line[MAX_LINE];
@@ -331,6 +340,94 @@ int main(int argc, char *argv[]) {
           }
         }
       }
+    } else if (strcmp(args[0], "start") == 0) {
+
+      if (count != 2) {
+        fprintf(stderr, "Uso: start <tarefa>\n");
+        continue;
+      }
+
+      if (job_count >= MAX_JOBS) {
+        fprintf(stderr, "Limite máximo de jobs atingido.\n");
+        continue;
+      }
+
+      int found = -1;
+
+      for (int i = 0; i < task_count; i++) {
+        if (strcmp(tasks[i].nome, args[1]) == 0) {
+          found = i;
+          break;
+        }
+      }
+
+      if (found == -1) {
+        fprintf(stderr, "Tarefa '%s' não existe.\n", args[1]);
+        continue;
+      }
+
+      pid_t pid = fork();
+
+      if (pid < 0) {
+        perror("Erro ao criar processo");
+        continue;
+      }
+
+      if (pid == 0) {
+        if (tasks[found].arquivo_entrada != NULL) {
+          int fd = open(tasks[found].arquivo_entrada, O_RDONLY);
+
+          if (fd == -1) {
+            perror("Erro ao abrir arquivo de entrada");
+            exit(EXIT_FAILURE);
+          }
+
+          if (dup2(fd, STDIN_FILENO) == -1) {
+            perror("Erro ao redirecionar entrada");
+            close(fd);
+            exit(EXIT_FAILURE);
+          }
+
+          close(fd);
+        }
+
+        if (tasks[found].arquivo_saida != NULL) {
+          int flags = O_WRONLY | O_CREAT;
+
+          if (tasks[found].append) {
+            flags |= O_APPEND;
+          } else {
+            flags |= O_TRUNC;
+          }
+
+          int fd = open(tasks[found].arquivo_saida, flags, 0644);
+
+          if (fd == -1) {
+            perror("Erro ao abrir arquivo de saída");
+            exit(EXIT_FAILURE);
+          }
+
+          if (dup2(fd, STDOUT_FILENO) == -1) {
+            perror("Erro ao redirecionar saída");
+            close(fd);
+            exit(EXIT_FAILURE);
+          }
+
+          close(fd);
+        }
+
+        execvp(tasks[found].argumentos[0], tasks[found].argumentos);
+        perror("Erro ao executar programa");
+        exit(EXIT_FAILURE);
+      }
+
+      jobs[job_count].id = job_count + 1;
+      jobs[job_count].pid = pid;
+      jobs[job_count].task_index = found;
+
+      printf("[%d] %ld\n", jobs[job_count].id, (long)pid);
+      job_count++;
+
     } else if (strcmp(args[0], "input") == 0) {
 
       if (count != 3) {

@@ -23,12 +23,28 @@ typedef struct Job {
   int id;
   pid_t pid;
   int task_index;
+  int finished;
+  int status;
 } Job;
 
 Task tasks[MAX_TASKS];
 int task_count = 0;
 Job jobs[MAX_JOBS];
 int job_count = 0;
+
+void update_jobs(void) {
+  for (int i = 0; i < job_count; i++) {
+    if (!jobs[i].finished) {
+      pid_t result = waitpid(jobs[i].pid, &jobs[i].status, WNOHANG);
+
+      if (result == jobs[i].pid) {
+        jobs[i].finished = 1;
+      } else if (result == -1) {
+        perror("Erro ao verificar job");
+      }
+    }
+  }
+}
 
 int main(int argc, char *argv[]) {
   char line[MAX_LINE];
@@ -53,6 +69,8 @@ int main(int argc, char *argv[]) {
   }
 
   while (1) {
+
+    update_jobs();
 
     if (interactive) {
       printf("processflow> ");
@@ -424,9 +442,72 @@ int main(int argc, char *argv[]) {
       jobs[job_count].id = job_count + 1;
       jobs[job_count].pid = pid;
       jobs[job_count].task_index = found;
+      jobs[job_count].finished = 0;
 
-      printf("[%d] %ld\n", jobs[job_count].id, (long)pid);
+      printf("[%d] %d\n", jobs[job_count].id, (int)pid);
       job_count++;
+
+    } else if (strcmp(args[0], "jobs") == 0) {
+
+      if (count != 1) {
+        fprintf(stderr, "Uso: jobs\n");
+        continue;
+      }
+
+      update_jobs();
+
+      for (int i = 0; i < job_count; i++) {
+        if (jobs[i].finished) {
+          printf("[%d] %d concluído %s\n", jobs[i].id, (int)jobs[i].pid,
+                 tasks[jobs[i].task_index].nome);
+        } else {
+          printf("[%d] %d executando %s\n", jobs[i].id, (int)jobs[i].pid,
+                 tasks[jobs[i].task_index].nome);
+        }
+      }
+
+    } else if (strcmp(args[0], "wait") == 0) {
+
+      if (count != 2) {
+        fprintf(stderr, "Uso: wait <jobId>\n");
+        continue;
+      }
+
+      int job_id = atoi(args[1]);
+      int found_job = -1;
+
+      for (int i = 0; i < job_count; i++) {
+        if (jobs[i].id == job_id) {
+          found_job = i;
+          break;
+        }
+      }
+
+      if (found_job == -1) {
+        fprintf(stderr, "Job '%s' não existe.\n", args[1]);
+        continue;
+      }
+
+      if (!jobs[found_job].finished) {
+        if (waitpid(jobs[found_job].pid, &jobs[found_job].status, 0) == -1) {
+          perror("Erro ao esperar job");
+          continue;
+        }
+
+        jobs[found_job].finished = 1;
+      }
+
+      printf("[%d] %d concluído %s\n", jobs[found_job].id,
+             (int)jobs[found_job].pid, tasks[jobs[found_job].task_index].nome);
+
+      if (WIFEXITED(jobs[found_job].status)) {
+        int exit_code = WEXITSTATUS(jobs[found_job].status);
+
+        if (exit_code != 0) {
+          fprintf(stderr, "Tarefa '%s' terminou com código %d.\n",
+                  tasks[jobs[found_job].task_index].nome, exit_code);
+        }
+      }
 
     } else if (strcmp(args[0], "input") == 0) {
 
@@ -513,6 +594,14 @@ int main(int argc, char *argv[]) {
 
     } else {
       fprintf(stderr, "Comando desconhecido: '%s'\n", args[0]);
+    }
+  }
+
+  for (int i = 0; i < job_count; i++) {
+    if (!jobs[i].finished) {
+      if (waitpid(jobs[i].pid, &jobs[i].status, 0) == jobs[i].pid) {
+        jobs[i].finished = 1;
+      }
     }
   }
 

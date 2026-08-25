@@ -95,11 +95,11 @@ int main(int argc, char *argv[]) {
     } else if (strcmp(args[0], "task") == 0) {
 
       if (count < 3) {
-        fprintf(stderr, "depois coloco mensagem\n");
+        fprintf(stderr, "Uso: task <nome> <programa> [argumentos...]\n");
         continue;
       }
       if (task_count >= MAX_TASKS) {
-        fprintf(stderr, "ERROR!");
+        fprintf(stderr, "Limite máximo de tarefas atingido.\n");
         continue;
       }
 

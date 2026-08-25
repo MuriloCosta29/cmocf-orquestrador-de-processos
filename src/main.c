@@ -21,35 +21,61 @@ typedef struct Task {
 Task tasks[MAX_TASKS];
 int task_count = 0;
 
-int main(void) {
+int main(int argc, char *argv[]) {
   char line[MAX_LINE];
   char *args[MAX_ARGS];
+  FILE *source = stdin;
+  int interactive = 1;
+
+  if (argc > 2) {
+    fprintf(stderr, "Uso: %s [workflowFile]\n", argv[0]);
+    return EXIT_FAILURE;
+  }
+
+  if (argc == 2) {
+    source = fopen(argv[1], "r");
+
+    if (source == NULL) {
+      perror("Erro ao abrir arquivo workflow");
+      return EXIT_FAILURE;
+    }
+
+    interactive = 0;
+  }
 
   while (1) {
 
-    printf("processflow> ");
-    fflush(stdout);
+    if (interactive) {
+      printf("processflow> ");
+      fflush(stdout);
+    }
 
-    char *result = fgets(line, sizeof(line), stdin);
+    char *result = fgets(line, sizeof(line), source);
 
     if (result == NULL) {
       break;
     }
 
-    line[strcspn(line, "\n")] = '\0';
+    if (!interactive) {
+      printf("%s", line);
 
-    if (strcmp(line, "exit") == 0) {
-      break;
+      if (strchr(line, '\n') == NULL) {
+        printf("\n");
+      }
+
+      fflush(stdout);
     }
+
+    line[strcspn(line, "\n")] = '\0';
 
     int count = 0;
 
-    char *token = strtok(line, " ");
+    char *token = strtok(line, " \t");
 
     while (token != NULL && count < MAX_ARGS - 1) {
       args[count] = token;
       count++;
-      token = strtok(NULL, " ");
+      token = strtok(NULL, " \t");
     }
 
     args[count] = NULL;
@@ -58,7 +84,15 @@ int main(void) {
       continue;
     }
 
-    if (strcmp(args[0], "task") == 0) {
+    if (strcmp(args[0], "exit") == 0) {
+      if (count != 1) {
+        fprintf(stderr, "Uso: exit\n");
+        continue;
+      }
+
+      break;
+
+    } else if (strcmp(args[0], "task") == 0) {
 
       if (count < 3) {
         fprintf(stderr, "depois coloco mensagem\n");
@@ -384,4 +418,10 @@ int main(void) {
       fprintf(stderr, "Comando desconhecido: '%s'\n", args[0]);
     }
   }
+
+  if (!interactive) {
+    fclose(source);
+  }
+
+  return EXIT_SUCCESS;
 }

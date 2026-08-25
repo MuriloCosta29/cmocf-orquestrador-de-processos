@@ -1,0 +1,5 @@
+PS1='$ '
+printf '\n\n'
+date
+whoami
+pwd

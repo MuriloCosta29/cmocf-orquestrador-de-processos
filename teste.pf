@@ -1,0 +1,73 @@
+task simples /bin/echo EXECUCAO-SIMPLES
+run simples
+
+task primeira /bin/echo PRIMEIRA-TAREFA
+task segunda /bin/echo SEGUNDA-TAREFA
+run sequential primeira segunda
+
+task paralela1 /bin/sleep 1
+task paralela2 /bin/sleep 1
+run parallel paralela1 paralela2
+
+task gerar /usr/bin/printf banana\nabacaxi\nmaca\n
+task ordenar /usr/bin/sort
+task copiar /bin/cat
+run pipe gerar ordenar copiar
+
+task linha1 /bin/echo linha-um
+output linha1 saida-teste.txt
+run linha1
+task linha2 /bin/echo linha-dois
+append linha2 saida-teste.txt
+run linha2
+task mostrar /bin/cat
+input mostrar saida-teste.txt
+run mostrar
+
+task diretorio /bin/pwd
+workdir /tmp
+run diretorio
+workdir /diretorio/inexistente
+run diretorio
+
+task pausa /bin/sleep 1
+start pausa
+jobs
+wait 1
+jobs
+
+run tarefa-inexistente
+input tarefa-inexistente arquivo.txt
+output tarefa-inexistente arquivo.txt
+append tarefa-inexistente arquivo.txt
+start tarefa-inexistente
+wait 999
+
+task programa-invalido /programa/inexistente
+run programa-invalido
+task falha /usr/bin/false
+run falha
+
+task entrada-invalida /bin/cat
+input entrada-invalida /arquivo/inexistente
+run entrada-invalida
+task saida-invalida /bin/echo texto
+output saida-invalida /diretorio/inexistente/saida.txt
+run saida-invalida
+
+workir /tmp
+task
+run
+run sequential
+run parallel
+run pipe uma
+start
+jobs argumento
+wait
+input
+output
+append
+workdir
+exit argumento
+
+exit

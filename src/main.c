@@ -148,6 +148,7 @@ int main(int argc, char *argv[]) {
 
       int first_task = 1;
       int parallel = 0;
+      int pipe_mode = 0;
 
       if (strcmp(args[1], "sequential") == 0) {
         if (count < 3) {
@@ -165,6 +166,15 @@ int main(int argc, char *argv[]) {
 
         first_task = 2;
         parallel = 1;
+
+      } else if (strcmp(args[1], "pipe") == 0) {
+        if (count < 4) {
+          fprintf(stderr, "Uso: run pipe <tarefa1> <tarefa2> [tarefa3...]\n");
+          continue;
+        }
+
+        first_task = 2;
+        pipe_mode = 1;
 
       } else if (count != 2) {
         fprintf(stderr, "Uso: run <tarefa>\n");
@@ -195,7 +205,135 @@ int main(int argc, char *argv[]) {
         continue;
       }
 
-      if (!parallel) {
+      if (pipe_mode) {
+        int pipe_fds[MAX_ARGS][2];
+        pid_t pids[MAX_ARGS];
+        int pipe_quantity = task_quantity - 1;
+        int pipe_error = 0;
+
+        for (int i = 0; i < pipe_quantity; i++) {
+          if (pipe(pipe_fds[i]) == -1) {
+            perror("Erro ao criar pipe");
+            pipe_error = 1;
+
+            for (int j = 0; j < i; j++) {
+              close(pipe_fds[j][0]);
+              close(pipe_fds[j][1]);
+            }
+
+            break;
+          }
+        }
+
+        if (pipe_error) {
+          continue;
+        }
+
+        for (int i = 0; i < task_quantity; i++) {
+          int task_index = task_indexes[i];
+          pids[i] = fork();
+
+          if (pids[i] < 0) {
+            perror("Erro ao criar processo");
+            continue;
+          }
+
+          if (pids[i] == 0) {
+            if (i == 0 && tasks[task_index].arquivo_entrada != NULL) {
+              int fd = open(tasks[task_index].arquivo_entrada, O_RDONLY);
+
+              if (fd == -1) {
+                perror("Erro ao abrir arquivo de entrada");
+                exit(EXIT_FAILURE);
+              }
+
+              if (dup2(fd, STDIN_FILENO) == -1) {
+                perror("Erro ao redirecionar entrada");
+                close(fd);
+                exit(EXIT_FAILURE);
+              }
+
+              close(fd);
+            } else if (i > 0) {
+              if (dup2(pipe_fds[i - 1][0], STDIN_FILENO) == -1) {
+                perror("Erro ao conectar entrada do pipe");
+                exit(EXIT_FAILURE);
+              }
+            }
+
+            if (i == task_quantity - 1 &&
+                tasks[task_index].arquivo_saida != NULL) {
+              int flags = O_WRONLY | O_CREAT;
+
+              if (tasks[task_index].append) {
+                flags |= O_APPEND;
+              } else {
+                flags |= O_TRUNC;
+              }
+
+              int fd = open(tasks[task_index].arquivo_saida, flags, 0644);
+
+              if (fd == -1) {
+                perror("Erro ao abrir arquivo de saída");
+                exit(EXIT_FAILURE);
+              }
+
+              if (dup2(fd, STDOUT_FILENO) == -1) {
+                perror("Erro ao redirecionar saída");
+                close(fd);
+                exit(EXIT_FAILURE);
+              }
+
+              close(fd);
+            } else if (i < task_quantity - 1) {
+              if (dup2(pipe_fds[i][1], STDOUT_FILENO) == -1) {
+                perror("Erro ao conectar saída do pipe");
+                exit(EXIT_FAILURE);
+              }
+            }
+
+            for (int j = 0; j < pipe_quantity; j++) {
+              close(pipe_fds[j][0]);
+              close(pipe_fds[j][1]);
+            }
+
+            execvp(tasks[task_index].argumentos[0],
+                   tasks[task_index].argumentos);
+
+            perror("Erro ao executar programa");
+            exit(EXIT_FAILURE);
+          }
+        }
+
+        for (int i = 0; i < pipe_quantity; i++) {
+          close(pipe_fds[i][0]);
+          close(pipe_fds[i][1]);
+        }
+
+        for (int i = 0; i < task_quantity; i++) {
+          if (pids[i] < 0) {
+            continue;
+          }
+
+          int status;
+          int task_index = task_indexes[i];
+
+          if (waitpid(pids[i], &status, 0) == -1) {
+            perror("Erro ao esperar processo");
+            continue;
+          }
+
+          if (WIFEXITED(status)) {
+            int exit_code = WEXITSTATUS(status);
+
+            if (exit_code != 0) {
+              fprintf(stderr, "Tarefa '%s' terminou com código %d.\n",
+                      tasks[task_index].nome, exit_code);
+            }
+          }
+        }
+
+      } else if (!parallel) {
         for (int i = 0; i < task_quantity; i++) {
           int task_index = task_indexes[i];
           pid_t pid = fork();

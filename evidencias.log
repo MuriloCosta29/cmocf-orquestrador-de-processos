@@ -1,0 +1,830 @@
+Script started on Tue Aug 25 10:14:02 2026
+Command: bash --norc --noprofile
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+bash-3.2$ rm -rf processflow.dSYM/
+bash-3.2$ clear
+[H[Jbash-3.2$ ls
+codigo-explicado.md	NOTES.md		src
+duvidas.md		processflow		teste
+evidencias.log		quick-notes.md		teste.pf
+Makefile		README.md
+nomes.txt		saida.txt
+bash-3.2$ echo "contexto de onde estou por conta do ex[Kci[K[Kvic[Kdencias [K.log esta sujo [K[K[K[K[K[Kr siu[K[Kiui[K[K[Ku[Kujo com b inarios [K"
+contexto de onde estou por conta do evidencias.log estar sujo com binarios
+bash-3.2$ date
+Tue Aug 25 10:15:06 -03 2026
+bash-3.2$ pwd[K[K[Kcc --version
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+bash-3.2$ git log --oneline
+[?1049h[36;1H[?1h=[33m14180f8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m chore: improve task error messages[m
+[33m0f00e99[m feat: add workflow execution mode[m
+[33m272d553[m feat: add task output redirection[m
+[33m3f8bef3[m feat: add task input redirection[m
+[33mcbe4578[m fix: report inknow commands[m
+[33m2824b5b[m feat: add folder experimens to .gitignore[m
+[33md03ea90[m chore: removing folder experiments[m
+[33m81dd5fc[m feat: add working directory command[m
+[33m58d6785[m feat: add sequential and parallel task execution[m
+[33m821ff6f[m fix: remove macOS-specific pid header[m
+[33m670c4e6[m feat: execute registered task[m
+[33mc1b159c[m feat: add task registration command[m
+[33meff58a9[m feat: split command line into argument array[m
+[33ma0004aa[m add variables, run, clean, debu[m
+[33m92f7fc5[m chore: update gitignore[m
+[33me2af0ff[m docs: add fork/exec/wait experiment[m
+[33m1ed9588[m feat: add exit command and strip trailing newline[m
+[33me4c4acb[m chore: remake Makefile[m
+[33md8e2bed[m feat: add interactive prompt loop with EOF handling[m
+[33mb5dd2fb[m chore: remove some files of .gitignore[m
+[33m657128d[m refactor: add comments for the files added on gitignore[m
+[33mb1d97f3[m Merge pull request #4 from MuriloCosta29/chore/2-makefile[m
+[33mea49b49[m[33m ([m[1;31morigin/chore/2-makefile[m[33m)[m chore: add Makefile with all, tes and clean targe[m [33m[m[33m[m[1;31m[m[33m[mts closes #2[m
+[33m3cd0912[m chore: add folders in gitignore[m
+[33mf665efa[m chore: setup do projeto closes #1[m
+[33m1b7d722[m docs(readme): add readme[m
+[7m(END)[27m[K[K[K[7m(END)[27m[K[K[K[7m(END)[27m[K[K[?1l>[?1049lbash-3.2$ make clean
+rm -f processflow
+bash-3.2$ make
+cc -Wall -Wextra -g src/main.c -o processflow
+bash-3.2$ echo "ja digitei o [Ks nomes [K[K[K[K[K[K[K[K[Kem nomes.txt pelo vim [K"
+ja digitei em nomes.txt pelo vim
+bash-3.2$ cat [Kn[K nomes.txt 
+Matheus
+Murilo
+Luiza
+Gustavo
+Arthur
+Milton
+Marcus
+Neymar
+Cristiano Ronaldo
+bash-3.2$ ./processflow
+tprocessflow> a task   listar ls -l
+Comando desconhecido: 'ttask'
+processflow> task listar ls -l
+Cadastro confirmado.
+processflow> run pi  ls istar
+total 160
+-rw-r--r--@ 1 murilocosta  staff   6369 Aug 25 08:22 codigo-explicado.md
+-rw-r--r--@ 1 murilocosta  staff   1166 Aug 24 10:22 duvidas.md
+-rw-r--r--@ 1 murilocosta  staff   3462 Aug 25 10:16 evidencias.log
+-rw-r--r--@ 1 murilocosta  staff    284 Aug 20 15:48 Makefile
+-rw-r--r--@ 1 murilocosta  staff     75 Aug 25 09:46 nomes.txt
+-rw-r--r--@ 1 murilocosta  staff   2450 Aug 24 17:18 NOTES.md
+-rwxr-xr-x@ 1 murilocosta  staff  34920 Aug 25 10:15 processflow
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 25 10:15 processflow.dSYM
+-rw-r--r--@ 1 murilocosta  staff   1071 Aug 24 08:49 quick-notes.md
+-rw-r--r--@ 1 murilocosta  staff     30 Aug 18 08:31 README.md
+-rw-r--r--@ 1 murilocosta  staff     75 Aug 25 09:56 saida.txt
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 25 08:26 src
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 18 10:27 teste
+-rw-r--r--@ 1 murilocosta  staff     84 Aug 22 19:09 teste.pf
+processflow> task ordenar sort
+Cadastro confirmado.
+processflow> iu  input ordenar so  nomes.txt
+processflow> output ordenar nomes.      saida.txt
+processflow> run ordenar  
+processflow> input contar nomes.txt
+Tarefa 'contar' não existe.
+processflow> task contar wc-l   -l
+Cadastro confirmado.
+processflow> input contar nomez s.txt
+processflow> run ques    sequential listar contar
+total 168
+-rw-r--r--@ 1 murilocosta  staff   6369 Aug 25 08:22 codigo-explicado.md
+-rw-r--r--@ 1 murilocosta  staff   1166 Aug 24 10:22 duvidas.md
+-rw-r--r--@ 1 murilocosta  staff   4775 Aug 25 10:17 evidencias.log
+-rw-r--r--@ 1 murilocosta  staff    284 Aug 20 15:48 Makefile
+-rw-r--r--@ 1 murilocosta  staff     75 Aug 25 09:46 nomes.txt
+-rw-r--r--@ 1 murilocosta  staff   2450 Aug 24 17:18 NOTES.md
+-rwxr-xr-x@ 1 murilocosta  staff  34920 Aug 25 10:15 processflow
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 25 10:15 processflow.dSYM
+-rw-r--r--@ 1 murilocosta  staff   1071 Aug 24 08:49 quick-notes.md
+-rw-r--r--@ 1 murilocosta  staff     30 Aug 18 08:31 README.md
+-rw-r--r--@ 1 murilocosta  staff     75 Aug 25 10:16 saida.txt
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 25 08:26 src
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 18 10:27 teste
+-rw-r--r--@ 1 murilocosta  staff     84 Aug 22 19:09 teste.pf
+       9
+processflow> run pa arallel listar contar  
+       9
+total 168
+-rw-r--r--@ 1 murilocosta  staff   6369 Aug 25 08:22 codigo-explicado.md
+-rw-r--r--@ 1 murilocosta  staff   1166 Aug 24 10:22 duvidas.md
+-rw-r--r--@ 1 murilocosta  staff   4775 Aug 25 10:17 evidencias.log
+-rw-r--r--@ 1 murilocosta  staff    284 Aug 20 15:48 Makefile
+-rw-r--r--@ 1 murilocosta  staff     75 Aug 25 09:46 nomes.txt
+-rw-r--r--@ 1 murilocosta  staff   2450 Aug 24 17:18 NOTES.md
+-rwxr-xr-x@ 1 murilocosta  staff  34920 Aug 25 10:15 processflow
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 25 10:15 processflow.dSYM
+-rw-r--r--@ 1 murilocosta  staff   1071 Aug 24 08:49 quick-notes.md
+-rw-r--r--@ 1 murilocosta  staff     30 Aug 18 08:31 README.md
+-rw-r--r--@ 1 murilocosta  staff     75 Aug 25 10:16 saida.txt
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 25 08:26 src
+drwxr-xr-x@ 3 murilocosta  staff     96 Aug 18 10:27 teste
+-rw-r--r--@ 1 murilocosta  staff     84 Aug 22 19:09 teste.pf
+processflow> task falha ls  /      ndo agora
+Cadastro confirmado.
+processflow> run falah  hando
+Erro ao executar programa: No such file or directory
+Tarefa 'falhando' terminou com código 1.
+processflow> task fala ha ls /naoexiste
+Cadastro confirmado.
+processflow> run falha
+ls: /naoexiste: No such file or directory
+Tarefa 'falha' terminou com código 1.
+processflow> run  n    n /n  naoex xiste
+Tarefa 'naoexiste' não existe.
+processflow> input r tarefaines  .  nomes.txt
+Tarefa 'tarefaines' não existe.
+processflow> workir    dir /diretorionaoe eix  xistente
+Erro ao alterar diretório: No such file or directory
+processflow> task gist so       hist sort
+Cadastro confirmado.
+processflow> input hist nomes. .. x yx  txt
+processflow> append hist historico.txt
+processflow> run i gi  hist  
+processflow> u run hos  ist
+processflow> task erro programaines
+Cadastro confirmado.
+processflow> run erro 
+Erro ao executar programa: No such file or directory
+Tarefa 'erro' terminou com código 1.
+processflow> ls            -l
+Comando desconhecido: 'ls'
+processflow> task
+Uso: task <nome> <programa> [argumentos...]
+processflow> 
+processflow> 
+processflow> 
+processflow> 
+processflow> exit
+bash-3.2$ cat saida.txt 
+Arthur
+Cristiano Ronaldo
+Gustavo
+Luiza
+Marcus
+Matheus
+Milton
+Murilo
+Neymar
+bash-3.2$ cat historico.txt 
+Arthur
+Cristiano Ronaldo
+Gustavo
+Luiza
+Marcus
+Matheus
+Milton
+Murilo
+Neymar
+Arthur
+Cristiano Ronaldo
+Gustavo
+Luiza
+Marcus
+Matheus
+Milton
+Murilo
+Neymar
+bash-3.2$ printf "task listar ls -l\nrun listar\nexit\n" > fluxo.pf
+bash-3.2$  [K
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ cat fluxo.pf 
+task listar ls -l
+run listar
+exit
+bash-3.2$ ./processflow semexit.pf
+Erro ao abrir arquivo workflow: No such file or directory
+bash-3.2$ proce[K[K[K[K[K./processflow naoexissi[K[Kiste.pf
+Erro ao abrir arquivo workflow: No such file or directory
+bash-3.2$ a b
+bash: a: command not found
+bash-3.2$ ./processflow
+processflow> ^Dbash-3.2$ exit
+exit
+
+Command exit status: 0
+Script done on Tue Aug 25 10:24:57 2026
+
+Script started on Tue Aug 25 10:57:25 2026
+Command: bash --noprofile --rcfile .evidrc -i
+
+
+Tue Aug 25 10:57:25 -03 2026
+murilocosta
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+$ Es[K[Kecho [K "estou tens[K[Kstando um script que já n[Kinicia o bash [K,[K e executa [K in[K[Kdate [K .[K[K, whoami e pwd  M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C.  [KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C" M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ca inicia o bash e executa date, whoami e pwd" M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C'""M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C" [KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+estou testando um script que ja inicia o bash e executa date, whoami e pwd
+$ clear
+[H[J$ exit
+exit
+
+Command exit status: 0
+Script done on Tue Aug 25 10:59:39 2026
+Script started on Tue Aug 25 16:44:12 2026
+Command: bash --noprofile --rcfile .evidrc -i
+
+
+Tue Aug 25 16:44:12 -03 2026
+murilocosta
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+$ make
+cc -Wall -Wextra -g src/main.c -o processflow
+$ ./process[K[K[K[K[K[K[K[K[K../[K[K/processflow
+processflow> task longa /bin/sleep 15
+Cadastro confirmado.
+processflow> task curta /bin/sleep 3
+Cadastro confirmado.
+processflow> start longa
+[1] 70812
+processflow> start curta
+[2] 70816
+processflow> jobs
+[1] 70812 executando longa
+[2] 70816 executando curta
+processflow> e wait 2
+[2] 70816 concluído curta
+processflow> jobs
+[1] 70812 executando longa
+[2] 70816 concluído curta
+processflow> wait 1
+[1] 70812 concluído longa
+processflow> jobs
+[1] 70812 concluído longa
+[2] 70816 concluído curta
+processflow> wait 99
+Job '99' não existe.
+processflow> exit
+$ exit
+exit
+
+Command exit status: 0
+Script done on Tue Aug 25 16:45:24 2026
+Script started on Tue Aug 25 21:38:53 2026
+Command: bash --noprofile --rcfile .evidrc -i
+
+
+Tue Aug 25 21:38:53 -03 2026
+murilocosta
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+$ task simples /bin/echo ola-mundo
+bash: task: command not found
+$ run [K[K[K[Krun siml[Kples
+bash: run: command not found
+$ tgask[K[K[K[Kask simpels /[K[K[K[K[Kles /bin [K/echo ola[K[K[KOLA_[K-MUNDO
+bash: task: command not found
+$ 
+$ exit
+exit
+
+Command exit status: 1
+Script done on Tue Aug 25 21:40:05 2026
+Script started on Tue Aug 25 21:41:24 2026
+Command: bash --noprofile --rcfile .evidrc -i
+
+
+Tue Aug 25 21:41:24 -03 2026
+murilocosta
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+$ ./processflow
+bash: ./processflow: No such file or directory
+$ clear[K[K[K[K[Kpwd
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+$ ./process[K[K[K[K[K[K[K[K[Klsa[K
+codigo-explicado.md	quick-notes.md
+duvidas.md		README.md
+evidencias.log		saida-teste.txt
+fluxo.pf		src
+Makefile		teste
+nomes.txt		teste-completo.pf
+NOTES.md
+$ ./[K[Kmake
+cc -Wall -Wextra -g src/main.c -o processflow
+$ ..[K/processflow
+processflow> task simples /i bin/echo ola-mundo
+Cadastro confirmado.
+processflow> run simmples     ples
+ola-mundo
+processflow> task primeira /bin/echo prima eira0 -tarefa
+Cadastro confirmado.
+processflow> task      run prme  imeira
+primeira-tarefa
+processflow> task segunda p /bin n/echo segunda  -taref   a fa
+Cadastro confirmado.
+processflow> run segunda
+segunda-tarefa
+processflow> run q sequential primeira segunda
+primeira-tarefa
+segunda-tarefa
+processflow> task parale ela /bin/sel  leep 1
+Cadastro confirmado.
+processflow> task paralela    2 /bin/sleep 2
+Cadastro confirmado.
+processflow> run parallel parela ela parel  alela  2
+Tarefa 'parelela' não existe.
+processflow> run parea  alela
+processflow> run parea  allel pare alela paralela  2
+processflow> task gerar /usr/bin/printf cris/                               t ask gerar us  /usr/bin/printf banaba      cris\nmesi si\nneymr ar  \n
+Cadastro confirmado.
+processflow> task ordernar su  usr/bin/sort
+Cadastro confirmado.
+processflow> task copiar /bin/cat
+Cadastro confirmado.
+processflow> run pipe gerar ordenar copiar
+Tarefa 'ordenar' não existe.
+processflow> run pipe gerar ordernar copiar  
+Erro ao executar programa: No such file or directory
+Tarefa 'ordernar' terminou com código 1.
+processflow> rh   j         j   h       h   un ordernar
+Erro ao executar programa: No such file or directory
+Tarefa 'ordernar' terminou com código 1.
+processflow> task ordenar ; /sur    u /usr/bin/sort
+Cadastro confirmado.
+processflow> rn un pipe gerar ordenar   copiar
+cris
+messi
+neymar
+processflow> task linha /  1 /s  /bim n/s echo  /    linha-um
+Cadastro confirmado.
+processflow> task linha2 /bin/echo linha-dois
+Cadastro confirmado.
+processflow> ojt    up tput linha  1 saida-test.txt    e.txt
+processflow> output        run linha1
+processflow> apped  nd     nd linha2 saida - a-teste.txt
+processflow> run linha2
+processflow> task mostrar /bin/cat
+Cadastro confirmado.
+processflow> inpu  t mostrar saida-teste  .txt
+processflow> run mostrar
+linha-um
+linha-dois
+processflow> task diretorio /bin/pe wd
+Cadastro confirmado.
+processflow> worki dir /tmp
+processflow> run diretorio
+/private/tmp
+processflow> workdir /diretorio/im nexistente
+Erro ao alterar diretório: No such file or directory
+processflow> work      run diretorio
+/private/tmp
+processflow> task pausa /bin/sleep 1
+Cadastro confirmado.
+processflow> start pausa
+[1] 84728
+processflow> kb  jobs
+[1] 84728 concluído pausa
+processflow> wait 1
+[1] 84728 concluído pausa
+processflow> jobs
+[1] 84728 concluído pausa
+processflow> run tarefa-inexistente
+Tarefa 'tarefa-inexistente' não existe.
+processflow> input tarefa -  -0 inexistente 
+Uso: input <tarefa> <arquivo>
+processflow> in  ^[[A\\\\\\\\\\              input tarefa-inexisten  ente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+processflow> output a tarefa-inexsitente arquivo.txt
+Tarefa 'tarefa-inexsitente' não existe.
+processflow> append tarefa-inexsitente arquivo.txt
+Tarefa 'tarefa-inexsitente' não existe.
+processflow> stra  art tarefa-inexsiet    ise tente  
+Tarefa 'tarefa-inexistente' não existe.
+processflow> wait 00  999
+Job '999' não existe.
+processflow> tqs ask pr       ask programa-invlaido /programa a/sirrr
+Cadastro confirmado.
+processflow> run programa in   -invalido
+Tarefa 'programa-invalido' não existe.
+processflow> task falah  ha /usr/bin/false
+Cadastro confirmado.
+processflow> run falha
+Tarefa 'falha' terminou com código 1.
+processflow> task est  ntrada-invalida /bin/cat cr7     t
+Cadastro confirmado.
+processflow> run entrada             input entada i  0inv    -oin   invalda  ida /arquivo- /u inex s
+Tarefa 'entada-invalida' não existe.
+processflow> run entrada-invalida
+
+
+
+
+
+
+^[^[^C
+$ ./processflow
+processflow> task entrada0 -invalida
+Uso: task <nome> <programa> [argumentos...]
+processflow> ^[[A    taks enta rada-ivn  nval lda /i bin/cat
+Comando desconhecido: 'taks'
+processflow> task t entrada  0in   0 -invl alida /bin/cat  
+Cadastro confirmado.
+processflow> inpt ut entrada-invalida /arquivo/inexistente  
+processflow> run entrada00  -invalida
+Erro ao abrir arquivo de entrada: No such file or directory
+Tarefa 'entrada-invalida' terminou com código 1.
+processflow> task sai-da     da-invalida
+Uso: task <nome> <programa> [argumentos...]
+processflow> task saida-invalida /bin/echo e texto
+Cadastro confirmado.
+processflow> output saida-invalida /diretorio/inexistente/saida.txt
+processflow> eu  run saida  .tx   -id nba  valida
+Erro ao abrir arquivo de saída: No such file or directory
+Tarefa 'saida-invalida' terminou com código 1.
+processflow> workd ir /tmp
+Comando desconhecido: 'workir'
+processflow> workdir /tmp
+processflow> task
+Uso: task <nome> <programa> [argumentos...]
+processflow> run
+Uso: run <tarefa>
+processflow> rn q   um n se equential
+Uso: run sequential <tarefa1> [tarefa2...]
+processflow> run parallel
+Uso: run parallel <tarefa1> [tarefa2...]
+processflow> run pipe u uma
+Uso: run pipe <tarefa1> <tarefa2> [tarefa3...]
+processflow> start
+Uso: start <tarefa>
+processflow> jobs arq gumento
+Uso: jobs
+processflow> wait
+Uso: wait <jobId>
+processflow> input
+Uso: input <tarefa> <arquivo>
+processflow> output
+Uso: output <tarefa> <arquivo>
+processflow> append
+Uso: append <tarefa> <arquivo>
+processflow> workdir
+Uso: workdir <diretório>
+processflow> exit argumento
+Uso: exit
+processflow> exi   
+processflow> 
+processflow> 
+processflow> ext it
+$ 
+$ 
+$ 
+$ ckear
+bash: ckear: command not found
+$ clear
+[H[J$ exit
+exit
+
+Command exit status: 0
+Script done on Tue Aug 25 22:07:26 2026
+Script started on Tue Aug 25 22:13:16 2026
+Command: bash --noprofile --rcfile .evidrc -i
+
+
+Tue Aug 25 22:13:16 -03 2026
+murilocosta
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+$ clear
+[H[J$ ./p[K[K[Kls
+codigo-explicado.md	Makefile		processflow.dSYM	src
+duvidas.md		nomes.txt		quick-notes.md		teste
+evidencias.log		NOTES.md		README.md		teste-completo.pf
+fluxo.pf		processflow		saida-teste.txt
+$ ./processflow teste-completo.pf 
+task simples /bin/echo EXECUCAO-SIMPLES
+Cadastro confirmado.
+run simples
+EXECUCAO-SIMPLES
+
+task primeira /bin/echo PRIMEIRA-TAREFA
+Cadastro confirmado.
+task segunda /bin/echo SEGUNDA-TAREFA
+Cadastro confirmado.
+run sequential primeira segunda
+PRIMEIRA-TAREFA
+SEGUNDA-TAREFA
+
+task paralela1 /bin/sleep 1
+Cadastro confirmado.
+task paralela2 /bin/sleep 1
+Cadastro confirmado.
+run parallel paralela1 paralela2
+
+task gerar /usr/bin/printf banana\nabacaxi\nmaca\n
+Cadastro confirmado.
+task ordenar /usr/bin/sort
+Cadastro confirmado.
+task copiar /bin/cat
+Cadastro confirmado.
+run pipe gerar ordenar copiar
+abacaxi
+banana
+maca
+
+task linha1 /bin/echo linha-um
+Cadastro confirmado.
+output linha1 saida-teste.txt
+run linha1
+task linha2 /bin/echo linha-dois
+Cadastro confirmado.
+append linha2 saida-teste.txt
+run linha2
+task mostrar /bin/cat
+Cadastro confirmado.
+input mostrar saida-teste.txt
+run mostrar
+linha-um
+linha-dois
+
+task diretorio /bin/pwd
+Cadastro confirmado.
+workdir /tmp
+run diretorio
+/private/tmp
+workdir /diretorio/inexistente
+Erro ao alterar diretório: No such file or directory
+run diretorio
+/private/tmp
+
+task pausa /bin/sleep 1
+Cadastro confirmado.
+start pausa
+[1] 90068
+jobs
+[1] 90068 executando pausa
+wait 1
+[1] 90068 concluído pausa
+jobs
+[1] 90068 concluído pausa
+
+run tarefa-inexistente
+Tarefa 'tarefa-inexistente' não existe.
+input tarefa-inexistente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+output tarefa-inexistente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+append tarefa-inexistente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+start tarefa-inexistente
+Tarefa 'tarefa-inexistente' não existe.
+wait 999
+Job '999' não existe.
+
+task programa-invalido /programa/inexistente
+Cadastro confirmado.
+run programa-invalido
+Erro ao executar programa: No such file or directory
+Tarefa 'programa-invalido' terminou com código 1.
+task falha /usr/bin/false
+Cadastro confirmado.
+run falha
+Tarefa 'falha' terminou com código 1.
+
+task entrada-invalida /bin/cat
+Cadastro confirmado.
+input entrada-invalida /arquivo/inexistente
+run entrada-invalida
+Erro ao abrir arquivo de entrada: No such file or directory
+Tarefa 'entrada-invalida' terminou com código 1.
+task saida-invalida /bin/echo texto
+Cadastro confirmado.
+output saida-invalida /diretorio/inexistente/saida.txt
+run saida-invalida
+Erro ao abrir arquivo de saída: No such file or directory
+Tarefa 'saida-invalida' terminou com código 1.
+
+workir /tmp
+Comando desconhecido: 'workir'
+task
+Uso: task <nome> <programa> [argumentos...]
+run
+Uso: run <tarefa>
+run sequential
+Uso: run sequential <tarefa1> [tarefa2...]
+run parallel
+Uso: run parallel <tarefa1> [tarefa2...]
+run pipe uma
+Uso: run pipe <tarefa1> <tarefa2> [tarefa3...]
+start
+Uso: start <tarefa>
+jobs argumento
+Uso: jobs
+wait
+Uso: wait <jobId>
+input
+Uso: input <tarefa> <arquivo>
+output
+Uso: output <tarefa> <arquivo>
+append
+Uso: append <tarefa> <arquivo>
+workdir
+Uso: workdir <diretório>
+exit argumento
+Uso: exit
+
+exit
+$ exit
+exit
+
+Command exit status: 0
+Script done on Tue Aug 25 22:13:39 2026
+Script started on Wed Aug 26 18:34:53 2026
+Command: bash --noprofile --rcfile .evidrc -i
+
+
+Wed Aug 26 18:34:53 -03 2026
+murilocosta
+/Users/murilocosta/Documents/01_college/3nd/infra-so/orquestrador-de-processos
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+$ make clean
+rm -f processflow
+$ make 
+cc -Wall -Wextra -g src/main.c -o processflow
+$ ./processflow teste.pf
+task simples /bin/echo EXECUCAO-SIMPLES
+Cadastro confirmado.
+run simples
+EXECUCAO-SIMPLES
+
+task primeira /bin/echo PRIMEIRA-TAREFA
+Cadastro confirmado.
+task segunda /bin/echo SEGUNDA-TAREFA
+Cadastro confirmado.
+run sequential primeira segunda
+PRIMEIRA-TAREFA
+SEGUNDA-TAREFA
+
+task paralela1 /bin/sleep 1
+Cadastro confirmado.
+task paralela2 /bin/sleep 1
+Cadastro confirmado.
+run parallel paralela1 paralela2
+
+task gerar /usr/bin/printf banana\nabacaxi\nmaca\n
+Cadastro confirmado.
+task ordenar /usr/bin/sort
+Cadastro confirmado.
+task copiar /bin/cat
+Cadastro confirmado.
+run pipe gerar ordenar copiar
+abacaxi
+banana
+maca
+
+task linha1 /bin/echo linha-um
+Cadastro confirmado.
+output linha1 saida-teste.txt
+run linha1
+task linha2 /bin/echo linha-dois
+Cadastro confirmado.
+append linha2 saida-teste.txt
+run linha2
+task mostrar /bin/cat
+Cadastro confirmado.
+input mostrar saida-teste.txt
+run mostrar
+linha-um
+linha-dois
+
+task diretorio /bin/pwd
+Cadastro confirmado.
+workdir /tmp
+run diretorio
+/private/tmp
+workdir /diretorio/inexistente
+Erro ao alterar diretório: No such file or directory
+run diretorio
+/private/tmp
+
+task pausa /bin/sleep 1
+Cadastro confirmado.
+start pausa
+[1] 12676
+jobs
+[1] 12676 executando pausa
+wait 1
+[1] 12676 concluído pausa
+jobs
+[1] 12676 concluído pausa
+
+run tarefa-inexistente
+Tarefa 'tarefa-inexistente' não existe.
+input tarefa-inexistente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+output tarefa-inexistente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+append tarefa-inexistente arquivo.txt
+Tarefa 'tarefa-inexistente' não existe.
+start tarefa-inexistente
+Tarefa 'tarefa-inexistente' não existe.
+wait 999
+Job '999' não existe.
+
+task programa-invalido /programa/inexistente
+Cadastro confirmado.
+run programa-invalido
+Erro ao executar programa: No such file or directory
+Tarefa 'programa-invalido' terminou com código 1.
+task falha /usr/bin/false
+Cadastro confirmado.
+run falha
+Tarefa 'falha' terminou com código 1.
+
+task entrada-invalida /bin/cat
+Cadastro confirmado.
+input entrada-invalida /arquivo/inexistente
+run entrada-invalida
+Erro ao abrir arquivo de entrada: No such file or directory
+Tarefa 'entrada-invalida' terminou com código 1.
+task saida-invalida /bin/echo texto
+Cadastro confirmado.
+output saida-invalida /diretorio/inexistente/saida.txt
+run saida-invalida
+Erro ao abrir arquivo de saída: No such file or directory
+Tarefa 'saida-invalida' terminou com código 1.
+
+workir /tmp
+Comando desconhecido: 'workir'
+task
+Uso: task <nome> <programa> [argumentos...]
+run
+Uso: run <tarefa>
+run sequential
+Uso: run sequential <tarefa1> [tarefa2...]
+run parallel
+Uso: run parallel <tarefa1> [tarefa2...]
+run pipe uma
+Uso: run pipe <tarefa1> <tarefa2> [tarefa3...]
+start
+Uso: start <tarefa>
+jobs argumento
+Uso: jobs
+wait
+Uso: wait <jobId>
+input
+Uso: input <tarefa> <arquivo>
+output
+Uso: output <tarefa> <arquivo>
+append
+Uso: append <tarefa> <arquivo>
+workdir
+Uso: workdir <diretório>
+exit argumento
+Uso: exit
+
+exit
+$ exit
+exit
+
+Command exit status: 0
+Script done on Wed Aug 26 18:35:11 2026
